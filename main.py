@@ -1,7 +1,3 @@
-"""
-Video Captures 30 frames per second, we have to send the image to the email.
-"""
-
 import time
 import cv2
 from emailing import send_email
@@ -45,23 +41,19 @@ while True:
 			
 		x, y, w, h = cv2.boundingRect(contour)
 		rectangle = cv2.rectangle(frame, (x,y), (x+w, y+h), (0, 255, 0), 3)
-		if rectangle.any(): # If moving object occurs
+		if rectangle.any():
 			status = 1
-			cv2.imwrite(f"images/{count}.png", frame) # for saving the frame
+			cv2.imwrite(f"images/{count}.png", frame)
 			count = count+1
 			
 			all_images = glob.glob("images/*.png")
-			# Suppose the middle image shows the object
 			index = int(len(all_images)/2)
 			image_with_object = all_images[index]
 			
-	status_list.append(status) # Checks for moving object entering(first 1) and exiting(0 after 1) frame
-	status_list = status_list[-2:] # Last two element to check
+	status_list.append(status)
+	status_list = status_list[-2:]
 	
 	if status_list[0] == 1 and status_list[1] == 0:
-		# Thread() creates a thread instance
-		# object.daemon = True means the object runs in background while the program runs simultaneously
-		
 		email_thread = Thread(target=send_email, args=(image_with_object, ))
 		email_thread.daemon = True
 		
@@ -78,8 +70,7 @@ while True:
 	
 	if key == ord('q'):
 		break
-		
-# Cleaning started after mail was sent
+
 clean_thread.start()
 
 video.release()

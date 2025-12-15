@@ -9,8 +9,8 @@ def send_email(image_path):
 	email_message["Subject"] = "New person in sight!"
 	email_message.set_content("Hey, just spotted a new person!")
 	
-	with open(image_path, "rb") as file: # reads the image as binary
-		content = file.read() # content of file as binary is stored
+	with open(image_path, "rb") as file:
+		content = file.read()
 	
 	email_message.add_attachment(content, maintype="image", subtype=imghdr.what(None, content))
 	
