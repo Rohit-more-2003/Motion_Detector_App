@@ -1,12 +1,18 @@
+"""
+Video Captures 30 frames per second, we have to send the image to the email.
+"""
+
 import time
 import cv2
 from emailing import send_email
+import glob
 
 video = cv2.VideoCapture(0)
 time.sleep(1)
 
 first_frame = None
 status_list = []
+count = 1
 
 while True:
 	status = 0
@@ -34,6 +40,13 @@ while True:
 		rectangle = cv2.rectangle(frame, (x,y), (x+w, y+h), (0, 255, 0), 3)
 		if rectangle.any(): # If moving object occurs
 			status = 1
+			cv2.imwrite(f"images/{count}.png", frame) # for saving the frame
+			count = count+1
+			
+			all_images = glob.glob("images/*.png")
+			# Suppose the middle image shows the object
+			index = int(len(all_images)/2)
+			image_with_object = all_images[index]
 			
 	status_list.append(status) # Checks for moving object entering(first 1) and exiting(0 after 1) frame
 	status_list = status_list[-2:] # Last two element to check
