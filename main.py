@@ -7,6 +7,7 @@ import cv2
 from emailing import send_email
 import glob
 import os
+from threading import Thread
 
 video = cv2.VideoCapture(0)
 time.sleep(1)
@@ -16,7 +17,6 @@ status_list = []
 count = 1
 
 def clean_folder():
-	"""This function empties the folder where images are stored"""
 	images = glob.glob("images/*.png")
 	for image in images:
 		os.remove(image)
@@ -59,8 +59,17 @@ while True:
 	status_list = status_list[-2:] # Last two element to check
 	
 	if status_list[0] == 1 and status_list[1] == 0:
-		send_email(image_with_object) # Sending mail at same time capturing frame causes frame to freeze
-		clean_folder()
+		# Thread() creates a thread instance
+		# object.daemon = True means the object runs in background while the program runs simultaneously
+		
+		email_thread = Thread(target=send_email, args=(image_with_object, ))
+		email_thread.daemon = True
+		
+		clean_thread = Thread(target=clean_folder)
+		clean_thread.daemon = True
+		
+		# Execute the threads
+		email_thread.start()
 	
 	print(status_list)
 		
@@ -70,4 +79,7 @@ while True:
 	if key == ord('q'):
 		break
 		
+# Cleaning started after mail was sent
+clean_thread.start()
+
 video.release()
