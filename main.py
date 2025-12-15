@@ -6,6 +6,7 @@ import time
 import cv2
 from emailing import send_email
 import glob
+import os
 
 video = cv2.VideoCapture(0)
 time.sleep(1)
@@ -14,10 +15,16 @@ first_frame = None
 status_list = []
 count = 1
 
+def clean_folder():
+	"""This function empties the folder where images are stored"""
+	images = glob.glob("images/*.png")
+	for image in images:
+		os.remove(image)
+		
+
 while True:
 	status = 0
 	check, frame = video.read()
-	
 	gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 	gray_frame_gau = cv2.GaussianBlur(gray_frame, (21, 21), 0)
 	
@@ -52,7 +59,8 @@ while True:
 	status_list = status_list[-2:] # Last two element to check
 	
 	if status_list[0] == 1 and status_list[1] == 0:
-		send_email(image_with_object)
+		send_email(image_with_object) # Sending mail at same time capturing frame causes frame to freeze
+		clean_folder()
 	
 	print(status_list)
 		
