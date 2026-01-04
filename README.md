@@ -65,11 +65,11 @@ Motion_Detector_App/
 
 ## ⚙️ Installation & Setup
 
-git clone <repository_url>
+git clone <repository_url><br>
 cd Motion_Detector_App
 
-python -m venv venv
-source venv/bin/activate      # Linux / macOS
+python -m venv venv<br>
+source venv/bin/activate      # Linux / macOS<br>
 venv\Scripts\activate         # Windows
 
 pip install -r requirements.txt
